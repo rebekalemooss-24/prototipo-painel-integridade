@@ -1,0 +1,941 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Protótipo Painel de Integridade Esportiva</title>
+  <style>
+    :root {
+      --bg: #f4f6f8;
+      --surface: #ffffff;
+      --surface-2: #eef2f6;
+      --ink: #172033;
+      --muted: #647084;
+      --line: #d9e0e8;
+      --primary: #1f4e78;
+      --primary-2: #163a5a;
+      --green: #13845f;
+      --amber: #b7791f;
+      --red: #b42318;
+      --blue-soft: #e6f0fa;
+      --green-soft: #e7f5ef;
+      --amber-soft: #fff3d6;
+      --red-soft: #fde8e7;
+      --shadow: 0 10px 24px rgba(23, 32, 51, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+    }
+
+    button, input, select {
+      font: inherit;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 248px 1fr;
+    }
+
+    .sidebar {
+      background: #172033;
+      color: #f8fafc;
+      padding: 20px 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: #f8fafc;
+      color: var(--primary);
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+    }
+
+    .brand-title {
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .brand-title span {
+      display: block;
+      color: #b8c4d2;
+      font-size: 12px;
+      font-weight: 400;
+      margin-top: 3px;
+    }
+
+    .nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .nav button {
+      border: 0;
+      width: 100%;
+      text-align: left;
+      padding: 11px 12px;
+      border-radius: 8px;
+      color: #dbe3ec;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .nav button[aria-pressed="true"] {
+      background: #26364d;
+      color: #ffffff;
+      font-weight: 700;
+    }
+
+    .sidebar-note {
+      margin-top: 28px;
+      padding: 12px;
+      border: 1px solid #3d4e66;
+      border-radius: 8px;
+      color: #cbd5e1;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .main {
+      min-width: 0;
+      padding: 22px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .topbar h1 {
+      font-size: 24px;
+      line-height: 1.2;
+      margin: 0 0 6px;
+    }
+
+    .topbar p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.45;
+      max-width: 780px;
+    }
+
+    .btn {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--ink);
+      padding: 10px 12px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(140px, 1fr));
+      gap: 10px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    label {
+      display: grid;
+      gap: 5px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    select, input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 9px 10px;
+      background: #ffffff;
+      color: var(--ink);
+      min-height: 38px;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .stat {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .stat span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .stat strong {
+      font-size: 25px;
+      letter-spacing: 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(320px, 0.8fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      min-width: 0;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px;
+      border-bottom: 1px solid var(--line);
+      align-items: center;
+    }
+
+    .panel-header h2 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 10px;
+      background: var(--surface-2);
+      cursor: pointer;
+    }
+
+    .tab[aria-selected="true"] {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 780px;
+    }
+
+    th, td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    th {
+      background: #f8fafc;
+      color: #334155;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    tr[data-selected="true"] {
+      background: var(--blue-soft);
+    }
+
+    tbody tr {
+      cursor: pointer;
+    }
+
+    .score {
+      display: inline-flex;
+      min-width: 58px;
+      justify-content: center;
+      border-radius: 8px;
+      padding: 4px 8px;
+      font-weight: 700;
+    }
+
+    .risk-high { background: var(--red-soft); color: var(--red); }
+    .risk-medium { background: var(--amber-soft); color: var(--amber); }
+    .risk-low { background: var(--green-soft); color: var(--green); }
+
+    .detail {
+      padding: 14px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .detail-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .detail-title h3 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.25;
+    }
+
+    .detail-title p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      line-height: 1.35;
+      font-size: 13px;
+    }
+
+    .facts {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .fact {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      background: #fbfcfe;
+    }
+
+    .fact span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+
+    .fact strong {
+      font-size: 15px;
+    }
+
+    .reasons {
+      display: grid;
+      gap: 8px;
+    }
+
+    .reason {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .bar {
+      height: 8px;
+      border-radius: 999px;
+      background: #e5eaf0;
+      overflow: hidden;
+      margin-top: 5px;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      background: var(--primary);
+    }
+
+    .timeline {
+      display: grid;
+      gap: 8px;
+    }
+
+    .event {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 10px;
+      align-items: start;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .event:last-child {
+      border-bottom: 0;
+    }
+
+    .minute {
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .event strong {
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .event span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .api {
+      margin-top: 14px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+
+    .api h2 {
+      margin: 0 0 10px;
+      font-size: 16px;
+    }
+
+    .endpoint-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(160px, 1fr));
+      gap: 10px;
+    }
+
+    .endpoint {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      background: #fbfcfe;
+      min-height: 78px;
+    }
+
+    .endpoint code {
+      display: block;
+      color: var(--primary-2);
+      font-weight: 700;
+      margin-bottom: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .endpoint span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    @media (max-width: 1120px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar {
+        position: static;
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+      .nav {
+        grid-template-columns: repeat(4, minmax(120px, 1fr));
+      }
+      .sidebar-note { display: none; }
+      .filters { grid-template-columns: repeat(2, minmax(160px, 1fr)); }
+      .summary { grid-template-columns: repeat(2, minmax(160px, 1fr)); }
+      .grid { grid-template-columns: 1fr; }
+      .endpoint-grid { grid-template-columns: repeat(2, minmax(160px, 1fr)); }
+    }
+
+    @media (max-width: 640px) {
+      .main { padding: 14px; }
+      .topbar { display: grid; }
+      .filters,
+      .summary,
+      .facts,
+      .endpoint-grid {
+        grid-template-columns: 1fr;
+      }
+      .nav {
+        grid-template-columns: 1fr 1fr;
+      }
+      .panel-header {
+        display: grid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" aria-label="Navegação do produto">
+      <div class="brand">
+        <div class="brand-mark">IE</div>
+        <div class="brand-title">Integridade Esportiva<span>Protótipo do painel</span></div>
+      </div>
+      <nav class="nav">
+        <button type="button" aria-pressed="true">Dashboard</button>
+        <button type="button" aria-pressed="false">Partidas</button>
+        <button type="button" aria-pressed="false">Atletas</button>
+        <button type="button" aria-pressed="false">Relatórios</button>
+      </nav>
+      <div class="sidebar-note">
+        O sistema prioriza casos para revisão. Score alto não significa prova de fraude.
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="topbar">
+        <div>
+          <h1>Painel de anomalias em partidas e atletas</h1>
+          <p>Transforma súmulas oficiais em rankings, filtros e justificativas para indicar onde a equipe deve olhar primeiro.</p>
+        </div>
+        <button class="btn btn-primary" type="button" id="exportBtn">Exportar relatório</button>
+      </section>
+
+      <section class="filters" aria-label="Filtros do painel">
+        <label>Temporada
+          <select id="seasonFilter">
+            <option value="Todas">Todas</option>
+            <option value="2026">2026</option>
+            <option value="2025">2025</option>
+            <option value="2024">2024</option>
+          </select>
+        </label>
+        <label>Série
+          <select id="seriesFilter">
+            <option value="Todas">Todas</option>
+            <option value="Série A">Série A</option>
+            <option value="Série B">Série B</option>
+          </select>
+        </label>
+        <label>Clube
+          <select id="clubFilter">
+            <option value="Todos">Todos</option>
+            <option value="Santa Cruz">Santa Cruz</option>
+            <option value="Sport">Sport</option>
+            <option value="Náutico">Náutico</option>
+            <option value="Ceará">Ceará</option>
+          </select>
+        </label>
+        <label>Risco mínimo
+          <select id="riskFilter">
+            <option value="Todos">Todos</option>
+            <option value="Alto">Alto</option>
+            <option value="Médio">Médio ou alto</option>
+            <option value="Baixo">Baixo, médio ou alto</option>
+          </select>
+        </label>
+        <label>Busca
+          <input id="searchFilter" type="search" placeholder="Partida ou atleta" />
+        </label>
+      </section>
+
+      <section class="summary" aria-label="Resumo da rodada">
+        <div class="stat"><span>Partidas analisadas</span><strong id="matchCount">0</strong></div>
+        <div class="stat"><span>Atletas monitorados</span><strong id="athleteCount">0</strong></div>
+        <div class="stat"><span>Alertas de alto risco</span><strong id="highCount">0</strong></div>
+        <div class="stat"><span>Última atualização</span><strong>D+1</strong></div>
+      </section>
+
+      <section class="grid">
+        <div class="panel">
+          <div class="panel-header">
+            <h2 id="rankingTitle">Ranking de partidas</h2>
+            <div class="tabs" role="tablist" aria-label="Tipo de ranking">
+              <button class="tab" id="matchesTab" type="button" role="tab" aria-selected="true">Partidas</button>
+              <button class="tab" id="athletesTab" type="button" role="tab" aria-selected="false">Atletas</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table aria-describedby="rankingTitle">
+              <thead id="tableHead"></thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <aside class="panel" aria-label="Detalhe do alerta">
+          <div class="panel-header">
+            <h2>Detalhe do alerta</h2>
+          </div>
+          <div class="detail" id="detailPanel"></div>
+        </aside>
+      </section>
+
+      <section class="api" aria-label="Entradas para backend">
+        <h2>O que o backend precisa entregar para esta tela</h2>
+        <div class="endpoint-grid">
+          <div class="endpoint"><code>GET /scores/matches</code><span>Ranking de partidas com score, risco e fatores do alerta.</span></div>
+          <div class="endpoint"><code>GET /scores/athletes</code><span>Ranking de atletas com histórico disciplinar e score.</span></div>
+          <div class="endpoint"><code>GET /matches/{id}</code><span>Detalhe da partida, eventos, súmula-fonte e memória de cálculo.</span></div>
+          <div class="endpoint"><code>GET /reports/export</code><span>Arquivo com alertas filtrados para entregar em relatório.</span></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const matches = [
+      {
+        id: "M-1026",
+        season: "2026",
+        series: "Série B",
+        match: "Santa Cruz x Ceará",
+        club: "Santa Cruz",
+        score: 0.87,
+        risk: "Alto",
+        cards: 9,
+        firstHalf: 6,
+        early: 3,
+        referee: "Árbitro A",
+        reasons: [
+          ["Cartões no 1º tempo", 82],
+          ["Cartões precoces", 76],
+          ["Volume acima da média", 88]
+        ],
+        events: [
+          ["08'", "Cartão amarelo", "Reclamação registrada em súmula"],
+          ["14'", "Cartão amarelo", "Retardar reinício de jogo"],
+          ["31'", "Cartão amarelo", "Falta tática no meio-campo"]
+        ]
+      },
+      {
+        id: "M-0991",
+        season: "2026",
+        series: "Série A",
+        match: "Sport x Náutico",
+        club: "Sport",
+        score: 0.73,
+        risk: "Alto",
+        cards: 8,
+        firstHalf: 5,
+        early: 2,
+        referee: "Árbitro B",
+        reasons: [
+          ["Concentração temporal", 72],
+          ["Volume disciplinar", 70],
+          ["Motivo não físico", 61]
+        ],
+        events: [
+          ["11'", "Cartão amarelo", "Conduta antidesportiva"],
+          ["18'", "Cartão amarelo", "Reclamação"],
+          ["42'", "Cartão vermelho", "Segundo cartão amarelo"]
+        ]
+      },
+      {
+        id: "M-0872",
+        season: "2025",
+        series: "Série B",
+        match: "Ceará x Náutico",
+        club: "Ceará",
+        score: 0.58,
+        risk: "Médio",
+        cards: 6,
+        firstHalf: 4,
+        early: 1,
+        referee: "Árbitro C",
+        reasons: [
+          ["Cartões no 1º tempo", 55],
+          ["Volume acima da média", 59],
+          ["Padrão do árbitro", 44]
+        ],
+        events: [
+          ["22'", "Cartão amarelo", "Falta persistente"],
+          ["38'", "Cartão amarelo", "Conduta antidesportiva"],
+          ["67'", "Cartão amarelo", "Retardar reinício de jogo"]
+        ]
+      },
+      {
+        id: "M-0710",
+        season: "2024",
+        series: "Série A",
+        match: "Santa Cruz x Sport",
+        club: "Santa Cruz",
+        score: 0.31,
+        risk: "Baixo",
+        cards: 4,
+        firstHalf: 1,
+        early: 0,
+        referee: "Árbitro D",
+        reasons: [
+          ["Cartões no 1º tempo", 20],
+          ["Cartões precoces", 0],
+          ["Volume acima da média", 28]
+        ],
+        events: [
+          ["52'", "Cartão amarelo", "Falta tática"],
+          ["74'", "Cartão amarelo", "Reclamação"],
+          ["86'", "Cartão amarelo", "Conduta antidesportiva"]
+        ]
+      }
+    ];
+
+    const athletes = [
+      {
+        id: "A-301",
+        season: "2026",
+        series: "Série B",
+        athlete: "Atleta 14",
+        club: "Santa Cruz",
+        score: 0.91,
+        risk: "Alto",
+        cards: 7,
+        firstHalf: 5,
+        early: 2,
+        reasons: [
+          ["Persistência individual", 90],
+          ["Cartões no 1º tempo", 84],
+          ["Motivos não físicos", 72]
+        ],
+        events: [
+          ["2026", "7 cartões", "5 no primeiro tempo"],
+          ["2025", "6 cartões", "4 por reclamação ou cera"],
+          ["2024", "5 cartões", "padrão acima da posição"]
+        ]
+      },
+      {
+        id: "A-228",
+        season: "2026",
+        series: "Série A",
+        athlete: "Atleta 8",
+        club: "Sport",
+        score: 0.67,
+        risk: "Médio",
+        cards: 5,
+        firstHalf: 3,
+        early: 1,
+        reasons: [
+          ["Cartões precoces", 62],
+          ["Histórico recente", 68],
+          ["Volume por posição", 54]
+        ],
+        events: [
+          ["Rodada 4", "Cartão aos 12'", "Reclamação"],
+          ["Rodada 9", "Cartão aos 21'", "Falta tática"],
+          ["Rodada 13", "Cartão aos 37'", "Retardar jogo"]
+        ]
+      },
+      {
+        id: "A-104",
+        season: "2025",
+        series: "Série B",
+        athlete: "Atleta 22",
+        club: "Náutico",
+        score: 0.42,
+        risk: "Médio",
+        cards: 4,
+        firstHalf: 2,
+        early: 0,
+        reasons: [
+          ["Volume disciplinar", 45],
+          ["Concentração temporal", 38],
+          ["Motivo textual", 43]
+        ],
+        events: [
+          ["Rodada 2", "Cartão amarelo", "Falta persistente"],
+          ["Rodada 10", "Cartão amarelo", "Conduta antidesportiva"],
+          ["Rodada 18", "Cartão amarelo", "Reclamação"]
+        ]
+      }
+    ];
+
+    const state = {
+      view: "matches",
+      selectedId: matches[0].id
+    };
+
+    const riskOrder = { "Baixo": 1, "Médio": 2, "Alto": 3 };
+
+    function riskClass(risk) {
+      if (risk === "Alto") return "risk-high";
+      if (risk === "Médio") return "risk-medium";
+      return "risk-low";
+    }
+
+    function currentData() {
+      const source = state.view === "matches" ? matches : athletes;
+      const season = document.getElementById("seasonFilter").value;
+      const series = document.getElementById("seriesFilter").value;
+      const club = document.getElementById("clubFilter").value;
+      const risk = document.getElementById("riskFilter").value;
+      const search = document.getElementById("searchFilter").value.trim().toLowerCase();
+      return source.filter(item => {
+        const label = state.view === "matches" ? item.match : item.athlete;
+        const riskOk = risk === "Todos" || riskOrder[item.risk] >= riskOrder[risk];
+        return (season === "Todas" || item.season === season)
+          && (series === "Todas" || item.series === series)
+          && (club === "Todos" || item.club === club)
+          && riskOk
+          && (!search || label.toLowerCase().includes(search) || item.club.toLowerCase().includes(search));
+      }).sort((a, b) => b.score - a.score);
+    }
+
+    function renderSummary() {
+      const filteredMatches = matches.filter(item => {
+        const season = document.getElementById("seasonFilter").value;
+        const series = document.getElementById("seriesFilter").value;
+        return (season === "Todas" || item.season === season) && (series === "Todas" || item.series === series);
+      });
+      const filteredAthletes = athletes.filter(item => {
+        const season = document.getElementById("seasonFilter").value;
+        const series = document.getElementById("seriesFilter").value;
+        return (season === "Todas" || item.season === season) && (series === "Todas" || item.series === series);
+      });
+      document.getElementById("matchCount").textContent = filteredMatches.length;
+      document.getElementById("athleteCount").textContent = filteredAthletes.length;
+      document.getElementById("highCount").textContent = filteredMatches.concat(filteredAthletes).filter(item => item.risk === "Alto").length;
+    }
+
+    function renderTable() {
+      const data = currentData();
+      const head = document.getElementById("tableHead");
+      const body = document.getElementById("tableBody");
+      const isMatches = state.view === "matches";
+
+      document.getElementById("rankingTitle").textContent = isMatches ? "Ranking de partidas" : "Ranking de atletas";
+      head.innerHTML = isMatches
+        ? "<tr><th>Partida</th><th>Série</th><th>Score</th><th>Risco</th><th>Cartões</th><th>1º tempo</th><th>Precoces</th></tr>"
+        : "<tr><th>Atleta</th><th>Clube</th><th>Série</th><th>Score</th><th>Risco</th><th>Cartões</th><th>1º tempo</th></tr>";
+
+      if (!data.length) {
+        body.innerHTML = `<tr><td colspan="7">Nenhum resultado para os filtros selecionados.</td></tr>`;
+        renderDetail(null);
+        return;
+      }
+
+      if (!data.some(item => item.id === state.selectedId)) state.selectedId = data[0].id;
+
+      body.innerHTML = data.map(item => {
+        const label = isMatches ? item.match : item.athlete;
+        return `<tr data-id="${item.id}" data-selected="${item.id === state.selectedId}">
+          <td><strong>${label}</strong><br><span style="color: var(--muted); font-size: 13px">${item.club} · ${item.season}</span></td>
+          ${isMatches ? `<td>${item.series}</td>` : `<td>${item.club}</td><td>${item.series}</td>`}
+          <td><span class="score ${riskClass(item.risk)}">${item.score.toFixed(2)}</span></td>
+          <td>${item.risk}</td>
+          <td>${item.cards}</td>
+          <td>${item.firstHalf}</td>
+          ${isMatches ? `<td>${item.early}</td>` : ""}
+        </tr>`;
+      }).join("");
+
+      body.querySelectorAll("tr[data-id]").forEach(row => {
+        row.addEventListener("click", () => {
+          state.selectedId = row.dataset.id;
+          renderTable();
+        });
+      });
+
+      renderDetail(data.find(item => item.id === state.selectedId));
+    }
+
+    function renderDetail(item) {
+      const panel = document.getElementById("detailPanel");
+      if (!item) {
+        panel.innerHTML = "<p>Nenhum caso selecionado.</p>";
+        return;
+      }
+      const isMatches = state.view === "matches";
+      const title = isMatches ? item.match : item.athlete;
+      const subtitle = isMatches ? `${item.series} · ${item.season} · ${item.referee}` : `${item.club} · ${item.series} · ${item.season}`;
+
+      panel.innerHTML = `
+        <div class="detail-title">
+          <div>
+            <h3>${title}</h3>
+            <p>${subtitle}</p>
+          </div>
+          <span class="score ${riskClass(item.risk)}">${item.score.toFixed(2)}</span>
+        </div>
+
+        <div class="facts">
+          <div class="fact"><span>Classificação</span><strong>${item.risk}</strong></div>
+          <div class="fact"><span>Total de cartões</span><strong>${item.cards}</strong></div>
+          <div class="fact"><span>Cartões no 1º tempo</span><strong>${item.firstHalf}</strong></div>
+          <div class="fact"><span>Cartões precoces</span><strong>${item.early}</strong></div>
+        </div>
+
+        <div>
+          <h3 style="font-size: 15px; margin: 0 0 8px">Motivos do alerta</h3>
+          <div class="reasons">
+            ${item.reasons.map(reason => `
+              <div class="reason">
+                <div>
+                  <strong>${reason[0]}</strong>
+                  <div class="bar"><span style="width:${reason[1]}%"></span></div>
+                </div>
+                <span>${reason[1]}%</span>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+
+        <div>
+          <h3 style="font-size: 15px; margin: 0 0 8px">${isMatches ? "Eventos da súmula" : "Histórico resumido"}</h3>
+          <div class="timeline">
+            ${item.events.map(event => `
+              <div class="event">
+                <div class="minute">${event[0]}</div>
+                <div><strong>${event[1]}</strong><span>${event[2]}</span></div>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    function setView(view) {
+      state.view = view;
+      state.selectedId = view === "matches" ? matches[0].id : athletes[0].id;
+      document.getElementById("matchesTab").setAttribute("aria-selected", String(view === "matches"));
+      document.getElementById("athletesTab").setAttribute("aria-selected", String(view === "athletes"));
+      renderTable();
+    }
+
+    function renderAll() {
+      renderSummary();
+      renderTable();
+    }
+
+    ["seasonFilter", "seriesFilter", "clubFilter", "riskFilter", "searchFilter"].forEach(id => {
+      document.getElementById(id).addEventListener("input", renderAll);
+    });
+
+    document.getElementById("matchesTab").addEventListener("click", () => setView("matches"));
+    document.getElementById("athletesTab").addEventListener("click", () => setView("athletes"));
+    document.getElementById("exportBtn").addEventListener("click", () => {
+      alert("No produto final, este botão exporta a lista filtrada em CSV, XLSX ou PDF.");
+    });
+
+    renderAll();
+  </script>
+</body>
+</html>
