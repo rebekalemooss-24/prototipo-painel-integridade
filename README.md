@@ -4,6 +4,12 @@ Protótipo interativo para apoiar a triagem de possíveis anomalias em partidas 
 
 > Este é um projeto educacional com dados sintéticos. Os scores não representam acusações, provas de fraude nem avaliações de pessoas reais.
 
+## Demonstração
+
+[Acesse o painel publicado](https://rebekalemooss-24.github.io/prototipo-painel-integridade/)
+
+![Visão principal do Painel de Integridade Esportiva](painel-integridade.png)
+
 ## Funcionalidades
 
 - indicadores resumidos de partidas, atletas e alertas;
@@ -50,7 +56,7 @@ Não é necessário instalar dependências ou iniciar um servidor.
 - armazenar dados em banco relacional;
 - documentar a fórmula de cálculo do score;
 - adicionar testes automatizados e validações de acessibilidade;
-- disponibilizar uma demonstração pública pelo GitHub Pages.
+- evoluir a demonstração pública com dados fornecidos por uma API.
 
 ## Autoria
 
