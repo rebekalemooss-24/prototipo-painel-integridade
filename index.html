@@ -508,7 +508,7 @@
         <button type="button" aria-pressed="false">Relatórios</button>
       </nav>
       <div class="sidebar-note">
-        O sistema prioriza casos para revisão. Score alto não significa prova de fraude.
+        Dados sintéticos para demonstração. O sistema prioriza casos para revisão; score alto não significa prova de fraude.
       </div>
     </aside>
 
@@ -925,15 +925,54 @@
       renderTable();
     }
 
+    function csvCell(value) {
+      const text = String(value ?? "");
+      return `"${text.replaceAll('"', '""')}"`;
+    }
+
+    function exportCurrentData() {
+      const data = currentData();
+      const isMatches = state.view === "matches";
+      const headers = isMatches
+        ? ["ID", "Partida", "Clube", "Temporada", "Serie", "Score", "Risco", "Cartoes", "Cartoes no 1o tempo", "Cartoes precoces"]
+        : ["ID", "Atleta", "Clube", "Temporada", "Serie", "Score", "Risco", "Cartoes", "Cartoes no 1o tempo", "Cartoes precoces"];
+
+      const rows = data.map(item => [
+        item.id,
+        isMatches ? item.match : item.athlete,
+        item.club,
+        item.season,
+        item.series,
+        item.score.toFixed(2),
+        item.risk,
+        item.cards,
+        item.firstHalf,
+        item.early
+      ]);
+
+      const csv = [headers, ...rows]
+        .map(row => row.map(csvCell).join(";"))
+        .join("\r\n");
+      const blob = new Blob(["\uFEFF", csv], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      const viewName = isMatches ? "partidas" : "atletas";
+
+      link.href = url;
+      link.download = `integridade-esportiva-${viewName}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    }
+
     ["seasonFilter", "seriesFilter", "clubFilter", "riskFilter", "searchFilter"].forEach(id => {
       document.getElementById(id).addEventListener("input", renderAll);
     });
 
     document.getElementById("matchesTab").addEventListener("click", () => setView("matches"));
     document.getElementById("athletesTab").addEventListener("click", () => setView("athletes"));
-    document.getElementById("exportBtn").addEventListener("click", () => {
-      alert("No produto final, este botão exporta a lista filtrada em CSV, XLSX ou PDF.");
-    });
+    document.getElementById("exportBtn").addEventListener("click", exportCurrentData);
 
     renderAll();
   </script>
